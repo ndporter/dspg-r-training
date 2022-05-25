@@ -1,13 +1,17 @@
 ---
-title: "Project Management With RStudio"
+title: "Project Management and Version Control with RStudio"
 teaching: 20
 exercises: 10
 questions:
-- "How can I manage my projects in R?"
+- "How can I manage my projects in R and Git?"
 objectives:
-- Create self-contained projects in RStudio
+- Create an RStudio project by cloning a git repository
+- Manage a git project using branches
+- Stage and commit changes to a Git project
+
 keypoints:
-- "Use RStudio to create and manage projects with consistent layout."
+- "Use RStudio and Git to create and manage projects with consistent layout."
+- "Use development branches to modify and test code before merging into main."
 - "Treat raw data as read-only."
 - "Treat generated output as disposable."
 - "Separate function definition and application."
@@ -56,18 +60,21 @@ Fortunately, there are tools and packages which can help you manage your work ef
 
 One of the most powerful and useful aspects of RStudio is its project management
 functionality. We'll be using this today to create a self-contained, reproducible
-project.
+project. Then, we'll combine that power with Git's version control features to make
+a clean, trackable, collaborative environment for your team.
 
 
-> ## Challenge 1: Creating a self-contained project
+> ## Challenge 1: Clone a Git repository into a project
 >
-> We're going to create a new project in RStudio:
+> We're going to create a new project in RStudio staring with an existing Git repository:
 >
-> 1. Click the "File" menu button, then "New Project".
-> 2. Click "New Directory".
-> 3. Click "New Project".
-> 4. Type in the name of the directory to store your project, e.g. "my_project".
-> 5. If available, select the checkbox for "Create a git repository."
+> 1. Create a New Repository (click "+" then "New Repository" on Github named "r-practice". 
+> Make it Public and check the "add a readme" option before clicking "Create".
+> 2. In RStudio, click the "File" menu button, then "New Project".
+> 3. Click "Version Control" then "Git".
+> 4. Copy the URL of your repository on Github.com (it should look like 
+> https://github.com/yourusername/projectname) into "Repository URL".
+> 5. Select where you'd like to place the project (it will create a new directory within your choice).
 > 6. Click the "Create Project" button.
 {: .challenge}
 
@@ -92,6 +99,70 @@ interfering with each other.
 
 Although there is no "best" way to lay out a project, there are some general
 principles to adhere to that will make project management easier:
+
+### Keep the main branch clean
+
+When using Git, the main branch should be reserved for "production" code that is
+ready to be shared and used by others. Creating branches related to specific
+tasks allows you to debug code for one or more upgrades or additions without
+damaging the original codebase's functionality. Once you're ready to commit
+your changes to the main branch, use a pull request to merge the changes.
+
+> ## Challenge 3: Authenticate RStudio in Git with SSH
+>
+> The first step to working with Git in RStudio is to get them talking to each other.
+> Git uses SSH to verify identities when creating branches or pushing changes.
+> We need to set up SSH in RStudio and Git, then connect them to work successfully.
+>
+> 1. In RStudio, click `Tools` in the top menu, then click `Global Options`.
+> 2. Click `Git/SVN`, then (unless you see an `SSH RSA key`, click `Create RSA Key...`.
+> 3. Click `View public key` then copy the key to your clipboard (CTRL-C or CMD-C).
+> 4. On Github.com, click your profile picture in the top-right, then `Settings`.
+> 5. Click `SSH and GPG keys` then `New SSH key`.
+> 6. Paste (CTRL/CMD-V) the key and give it a name like `RStudio` and click `Add SSH key`.
+> 7. Switch to the `Terminal` tab in the left RStudio pane.
+> 8. Type `ssh -T git@github.com` in the terminal and press enter. You should get a message like:
+> `Hi username! You've successfully authenticated, but GitHub does not provide shell access.`
+> 9. Type `git config remote.origin.url git@github.com:your_username/your_project.git`
+> into the terminal and press enter. You should not see an error (or any message),
+> but you should be setup to go!
+{: .challenge}
+
+> ## Challenge 4: Create a new branch in your Git repository
+>
+>
+> 1. Click the Git tab on the top-right pane.
+> 2. Notice that you are on branch `main`. Click the flowchart symbol to the left
+> of `main` to create a new branch.
+> 3. Name the branch `dev` (short for development) and click create.
+> You should see a status window and may be asked for a passcode if you protected your SSH.
+> If you are prompted for your username and password, SSH is not setup correctly yet.
+> 4. Close the popup and check that you are now on branch `dev`.
+{: .challenge}
+
+### Make small commits with clear messages
+
+It can be easy to forget to commit changes to git for hours or days, but the more changes
+you make in a single commit (especially if they're unrelated), the harder it can be to
+find what went wrong if you need to change something back. When you switch tasks or reach
+a stopping point, make sure to stage and commit changes. It's also important to write
+clear, short commit messages that describe the change so you can find it again later.
+
+> ## Challenge 4: Stage, commit, and push changes to a new branch
+>
+>
+> 1. Notice there are two files with `?` status and unstaged changes.
+> Check the "Staged box to the left of each to add the changes to Git.
+> The status should now show as added (`A`).
+> 2. Click commit to open the Git `Review Changes` dialog.
+> 3. After checking that the file contents look correct, type the commit message:
+`Add R project for practice exercises.` and click `Commit`.
+> 4. Close the status window and the review changes window. The files should now be
+missing from the Git tab, but there will be a message that your branch is ahead of main.
+> 5. Click the green up arrow in the Git pane (`Push Branch`). Close the popup.
+> 6. Refresh your repository at github.com. It should now have 2 branches.
+> If you click the down arrow by `Main` and switch to `dev` you should see the 2 files.
+{: .challenge}
 
 ### Treat data as read only
 
@@ -126,16 +197,23 @@ project, and some of the analyses get shared between projects.
 > 1. Put each project in its own directory, which is named after the project.
 > 2. Put text documents associated with the project in the `doc` directory.
 > 3. Put raw data and metadata in the `data` directory, and files generated during cleanup and analysis in a `results` directory.
-> 4. Put source for the project's scripts and programs in the `src` directory, and programs brought in from elsewhere or compiled locally in the `bin` directory.
+> 4. Put source for the project's scripts and programs in the `src` directory, 
+> and programs brought in from elsewhere or compiled locally in the `bin` directory.
 > 5. Name all files to reflect their content or function.
 >
 {: .callout}
 
+In the RStudio `Files` pane (bottom right), use `New Folder` to create these directories:
+`doc`, `data`, `results`, `src`, and `bin`. All should be visible from the main project directory.
+Your RStudio desktop should resemble the image below:
+
+![Screenshot of RStudio project on dev branch with new folders](../fig/rstudio-project-folders.png)
+
 ### Separate function definition and application
 
-One of the more effective ways to work with R is to start by writing the code you want to run directly in a .R script, and then running the selected lines (either using the keyboard shortcuts in RStudio or clicking the "Run" button) in the interactive R console.
+One of the more effective ways to work with R is to start by writing the code you want to run directly in a .R script or .Rmd markdown file, and then running the selected chunks in the interactive R console.
 
-When your project is in its early stages, the initial .R script file usually contains many lines
+When your project is in its early stages, the initial file usually contains many lines
 of directly executed code. As it matures, reusable chunks get pulled into their
 own functions. It's a good idea to separate these functions into two separate folders; one
 to store useful functions that you'll reuse across analyses and projects, and
@@ -145,7 +223,7 @@ one to store the analysis scripts.
 
 Now we have a good directory structure we will now place/save the data file in the `data/` directory.
 
-> ## Challenge 3
+> ## Challenge 5
 > Download the gapminder data from [here](https://raw.githubusercontent.com/swcarpentry/r-novice-gapminder/gh-pages/_episodes_rmd/data/gapminder_data.csv).
 >
 > 1. Download the file (right mouse click on the link above -> "Save link as" / "Save file as", or click on the link and after the page loads, press <kbd>Ctrl</kbd>+<kbd>S</kbd> or choose File -> "Save page as")
@@ -154,38 +232,6 @@ Now we have a good directory structure we will now place/save the data file in t
 >
 > We will load and inspect these data later.
 {: .challenge}
-
-> ## Challenge 4
-> It is useful to get some general idea about the dataset, directly from the
-> command line, before loading it into R. Understanding the dataset better
-> will come in handy when making decisions on how to load it in R. Use the command-line
-> shell to answer the following questions:
-> 1. What is the size of the file?
-> 2. How many rows of data does it contain?
-> 3. What kinds of values are stored in this file?
->
-> > ## Solution to Challenge 4
-> >
-> > By running these commands in the shell:
-> > ```{r ch2a-sol, engine='sh'}
-> > ls -lh data/gapminder_data.csv
-> > ```
-> > The file size is 80K.
-> > ```{r ch2b-sol, engine='sh'}
-> > wc -l data/gapminder_data.csv
-> > ```
-> > There are 1705 lines. The data looks like:
-> > ```{r ch2c-sol, engine='sh'}
-> > head data/gapminder_data.csv
-> > ```
-> {: .solution}
-{: .challenge}
-
-> ## Tip: command line in RStudio
->
-> The Terminal tab in the console pane provides a convenient place directly
-> within RStudio to interact directly with the command line.
-{: .callout}
 
 ### Working directory
 
@@ -211,7 +257,3 @@ Each time you create a new RStudio Project, it will create a new directory for t
 > When you're attempting to reference a file in your R code and you're getting errors saying the file doesn't exist, it's a good idea to check your working directory.
 > You need to either provide an absolute path to the file, or you need to make sure the file is saved in the working directory (or a subfolder of the working directory) and provide a relative path. 
 {: .callout}
-
-### Version Control
-
-It is important to use version control with projects.  Go [here for a good lesson which describes using Git with RStudio](https://swcarpentry.github.io/git-novice/14-supplemental-rstudio/).
