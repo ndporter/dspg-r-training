@@ -5,6 +5,9 @@ root: .
 ---
 ## Instructional Material
 
+This repository is maintained by [Nathaniel D. Porter](https://github.com/ndporter) and all material, except where explicitly indicated, is made available under the [Creative Commons Attribution
+license][cc-by-human]. The following is a human-readable summary of (and not a substitute for) the [full legal text of the CC BY 4.0 license][cc-by-legal]. It includes extensive material adapted from Software Carpentry, as well as material from other sources (where noted) and original material by Nathaniel D. Porter. Please provide credit to both the maintainer and original developers when adapting, reusing or citing.
+
 All Software Carpentry, Data Carpentry, and Library Carpentry instructional material is
 made available under the [Creative Commons Attribution
 license][cc-by-human]. The following is a human-readable summary of
